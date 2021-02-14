@@ -85,9 +85,7 @@ const WebcamStreamCapture = () => {
             ) : (
               <Button handler={handleStartCaptureClick}>Start Capture</Button>
             )}
-            {recordedChunks.length > 0 && (
-              <Button handler={handleSaveVideo}>Save Video</Button>
-            )}
+            {recordedChunks.length > 0 && handleSaveVideo()}
           </div>
           <h2 className="font-bold text-3xl text-center p-4">
             Recorded videos:
