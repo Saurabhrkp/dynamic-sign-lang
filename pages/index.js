@@ -7,6 +7,7 @@ const WebcamStreamCapture = () => {
   const mediaRecorderRef = React.useRef(null);
   const [capturing, setCapturing] = React.useState(false);
   const [recordedChunks, setRecordedChunks] = React.useState([]);
+  const [letter, setLetter] = React.useState([]);
   const [videos, setVideos] = React.useState([]);
 
   const handleStartCaptureClick = React.useCallback(() => {
@@ -80,6 +81,15 @@ const WebcamStreamCapture = () => {
             className="mx-auto my-8 w-auto h-auto lg:h-1/4 rounded-md"
           />
           <div className="flex justify-center">
+            <label className="text-xl">
+              Record for:
+              <input
+                className="border-4 border-blue-600 border-opacity-50 rounded-md m-1 py-1 shadow-lg"
+                type="text"
+                value={letter}
+                onChange={(e) => setLetter(e.target.value)}
+              />
+            </label>
             {capturing ? (
               <Button handler={handleStopCaptureClick}>Stop Capture</Button>
             ) : (
@@ -109,7 +119,7 @@ const WebcamStreamCapture = () => {
                 />
                 <div>
                   <Button handler={() => deleteVideo(videoURL)}>Delete</Button>
-                  <a href={videoURL}>
+                  <a href={videoURL} download={`${letter}_${i}`}>
                     <Button handler={() => {}}>Download</Button>
                   </a>
                 </div>
