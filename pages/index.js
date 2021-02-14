@@ -48,6 +48,12 @@ const WebcamStreamCapture = () => {
     }
   }, [recordedChunks]);
 
+  const deleteVideo = (videoURL) => {
+    setVideos((prevState) => {
+      return prevState.filter((v) => v !== videoURL);
+    });
+  };
+
   return (
     <>
       <Head>
