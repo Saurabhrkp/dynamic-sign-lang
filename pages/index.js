@@ -1,13 +1,15 @@
 import React from "react";
 import Webcam from "react-webcam";
 import Head from "next/head";
+import { options } from "../constants";
 
 const WebcamStreamCapture = () => {
   const webcamRef = React.useRef(null);
   const mediaRecorderRef = React.useRef(null);
   const [capturing, setCapturing] = React.useState(false);
   const [recordedChunks, setRecordedChunks] = React.useState([]);
-  const [letter, setLetter] = React.useState([]);
+  const [letter, setLetter] = React.useState("A");
+  const [number, setNumber] = React.useState(0);
   const [videos, setVideos] = React.useState([]);
 
   const handleStartCaptureClick = React.useCallback(() => {
@@ -58,7 +60,7 @@ const WebcamStreamCapture = () => {
   const Button = (props) => {
     return (
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded-md m-2 shadow-lg"
+        className="bg-blue-500 text-white px-3 py-2 rounded-md m-2 shadow-lg hover:bg-blue-600"
         type="button"
         onClick={props.handler}
       >
@@ -83,11 +85,27 @@ const WebcamStreamCapture = () => {
           <div className="flex justify-center">
             <label className="text-xl">
               Record for:
-              <input
-                className="border-4 border-blue-600 border-opacity-50 rounded-md m-1 py-1 shadow-lg"
-                type="text"
+              <select
+                className="border-4 border-blue-500 border-opacity-50 rounded-md m-2 py-1 shadow-lg focus:outline-none focus:ring-indigo-500 focus:border-blue-600 "
                 value={letter}
                 onChange={(e) => setLetter(e.target.value)}
+              >
+                {options.map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="text-xl">
+              Starting index:
+              <input
+                className="border-4 border-blue-500 border-opacity-50 rounded-md m-2 py-1 shadow-lg w-20 focus:outline-none focus:ring-indigo-500 focus:border-blue-600"
+                type="number"
+                min="0"
+                value={number}
+                onChange={(e) => setNumber(e.target.value)}
+                placeholder="0"
               />
             </label>
             {capturing ? (
@@ -108,18 +126,24 @@ const WebcamStreamCapture = () => {
           <div className="grid grid-flow-row grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {videos.map((videoURL, i) => (
               <div
-                key={`video_${i}`}
+                key={`${letter}_${i + parseInt(number)}`}
                 className="flex-col mx-auto justify-center my-2"
               >
+                <h4 className="font-bold text-lg text-center p-2">
+                  {`${letter}_${i + parseInt(number)}`}
+                </h4>
                 <video
                   src={videoURL}
                   autoPlay
                   loop
-                  className="rounded-md mx-auto"
+                  className="rounded-md mx-auto my-2"
                 />
-                <div>
+                <div className="flex justify-center">
                   <Button handler={() => deleteVideo(videoURL)}>Delete</Button>
-                  <a href={videoURL} download={`${letter}_${i}`}>
+                  <a
+                    href={videoURL}
+                    download={`${letter}_${i + parseInt(number)}`}
+                  >
                     <Button handler={() => {}}>Download</Button>
                   </a>
                 </div>
