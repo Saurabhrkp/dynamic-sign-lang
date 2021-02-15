@@ -39,7 +39,7 @@ const WebcamStreamCapture = () => {
   const handleSaveVideo = React.useCallback(() => {
     if (recordedChunks.length) {
       const blob = new Blob(recordedChunks, {
-        type: "video/webm",
+        type: "video/mp4",
       });
       const url = URL.createObjectURL(blob);
       setVideos((prevState) => {
