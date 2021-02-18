@@ -53,6 +53,15 @@ const WebcamStreamCapture = () => {
     }
   }, [recordedChunks]);
 
+  const saveAllRecording = React.useCallback(() => {
+    videos.map((url, i) => {
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${letter}_${i + parseInt(index)}`;
+      a.click();
+    });
+  }, [videos]);
+
   const deleteVideo = (videoURL) => {
     setVideos((prevState) => {
       return prevState.filter((v) => v !== videoURL);
@@ -86,7 +95,7 @@ const WebcamStreamCapture = () => {
             className="mx-auto my-8 w-auto h-auto lg:h-1/4 rounded-md"
           />
           <div className="flex justify-center">
-            <label className="text-xl">
+            <label className="text-xl font-semibold">
               Record for:
               <select
                 className="border-4 border-blue-500 border-opacity-50 rounded-md m-2 py-1 shadow-lg focus:outline-none focus:ring-indigo-500 focus:border-blue-600 "
@@ -100,7 +109,7 @@ const WebcamStreamCapture = () => {
                 ))}
               </select>
             </label>
-            <label className="text-xl">
+            <label className="text-xl font-semibold">
               Starting index:
               <input
                 className="border-4 border-blue-500 border-opacity-50 rounded-md m-2 py-1 shadow-lg w-20 focus:outline-none focus:ring-indigo-500 focus:border-blue-600"
@@ -111,7 +120,7 @@ const WebcamStreamCapture = () => {
                 placeholder="0"
               />
             </label>
-            <label className="text-xl">
+            <label className="text-xl font-semibold">
               Capture Set of:
               <input
                 className="border-4 border-blue-500 border-opacity-50 rounded-md m-2 py-1 shadow-lg w-20 focus:outline-none focus:ring-indigo-500 focus:border-blue-600"
@@ -124,14 +133,14 @@ const WebcamStreamCapture = () => {
             {capturing ? (
               <button
                 type="button"
-                className="bg-red-500 text-white px-3 py-2 rounded-md m-2 shadow-lg hover:bg-red-600 animate-pulse"
+                className="bg-red-500 text-white font-semibold uppercase tracking-wider p-2 rounded-md m-2 shadow-lg hover:bg-red-600 animate-pulse"
               >
                 Recording Set
               </button>
             ) : (
               <button
                 type="button"
-                className="bg-blue-500 text-white px-3 py-2 rounded-md m-2 shadow-lg hover:bg-blue-600"
+                className="bg-blue-500 text-white font-semibold uppercase tracking-wider p-2 rounded-md m-2 shadow-lg hover:bg-blue-600"
                 onClick={startRecordingSet}
               >
                 Start Capture
@@ -146,6 +155,17 @@ const WebcamStreamCapture = () => {
             <h3 className="font-bold text-2xl text-center p-4">
               Start recording to get dataset
             </h3>
+          )}
+          {videos.length > 2 && (
+            <div className="text-center">
+              <button
+                type="button"
+                className="bg-green-600 text-white font-semibold uppercase tracking-wider px-7 py-3 rounded-md m-2 shadow-lg hover:bg-green-700"
+                onClick={saveAllRecording}
+              >
+                Save All
+              </button>
+            </div>
           )}
           <div className="grid grid-flow-row grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {videos.map((videoURL, i) => (
@@ -165,7 +185,7 @@ const WebcamStreamCapture = () => {
                 <div className="flex justify-center">
                   <button
                     type="button"
-                    className="bg-red-400 text-white px-3 py-2 rounded-md m-2 shadow-lg hover:bg-red-500"
+                    className="bg-red-400 text-white font-semibold uppercase tracking-wider p-2 rounded-md m-2 shadow-lg hover:bg-red-500"
                     onClick={() => deleteVideo(videoURL)}
                   >
                     Delete
@@ -176,7 +196,7 @@ const WebcamStreamCapture = () => {
                   >
                     <button
                       type="button"
-                      className="bg-green-500 text-white px-3 py-2 rounded-md m-2 shadow-lg hover:bg-green-600"
+                      className="bg-green-500 text-white font-semibold uppercase tracking-wider p-2 rounded-md m-2 shadow-lg hover:bg-green-600"
                     >
                       Download
                     </button>
