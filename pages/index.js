@@ -9,7 +9,8 @@ const WebcamStreamCapture = () => {
   const [capturing, setCapturing] = React.useState(false);
   const [recordedChunks, setRecordedChunks] = React.useState([]);
   const [letter, setLetter] = React.useState("A");
-  const [number, setNumber] = React.useState(0);
+  const [captureSet, setCaptureSet] = React.useState(10);
+  const [index, setIndex] = React.useState(0);
   const [videos, setVideos] = React.useState([]);
 
   const handleStartCaptureClick = React.useCallback(() => {
@@ -22,6 +23,7 @@ const WebcamStreamCapture = () => {
       handleDataAvailable
     );
     mediaRecorderRef.current.start();
+    setTimeout(handleStopCaptureClick, 5000);
   }, [webcamRef, setCapturing, mediaRecorderRef]);
 
   const handleDataAvailable = React.useCallback(
@@ -57,17 +59,18 @@ const WebcamStreamCapture = () => {
     });
   };
 
-  const Button = (props) => {
-    return (
-      <button
-        className="bg-blue-500 text-white px-3 py-2 rounded-md m-2 shadow-lg hover:bg-blue-600"
-        type="button"
-        onClick={props.handler}
-      >
-        {props.children}
-      </button>
-    );
-  };
+  const startRecordingSet = React.useCallback(() => {
+    let set = 1;
+    handleStartCaptureClick();
+    const interval = setInterval(() => {
+      if (set < captureSet) {
+        handleStartCaptureClick();
+        set++;
+      } else {
+        return () => clearInterval(interval);
+      }
+    }, 8000);
+  }, [captureSet]);
 
   return (
     <>
@@ -103,15 +106,36 @@ const WebcamStreamCapture = () => {
                 className="border-4 border-blue-500 border-opacity-50 rounded-md m-2 py-1 shadow-lg w-20 focus:outline-none focus:ring-indigo-500 focus:border-blue-600"
                 type="number"
                 min="0"
-                value={number}
-                onChange={(e) => setNumber(e.target.value)}
+                value={index}
+                onChange={(e) => setIndex(e.target.value)}
                 placeholder="0"
               />
             </label>
+            <label className="text-xl">
+              Capture Set of:
+              <input
+                className="border-4 border-blue-500 border-opacity-50 rounded-md m-2 py-1 shadow-lg w-20 focus:outline-none focus:ring-indigo-500 focus:border-blue-600"
+                type="number"
+                min="4"
+                value={captureSet}
+                onChange={(e) => setCaptureSet(e.target.value)}
+              />
+            </label>
             {capturing ? (
-              <Button handler={handleStopCaptureClick}>Stop Capture</Button>
+              <button
+                type="button"
+                className="bg-red-500 text-white px-3 py-2 rounded-md m-2 shadow-lg hover:bg-red-600 animate-pulse"
+              >
+                Recording Set
+              </button>
             ) : (
-              <Button handler={handleStartCaptureClick}>Start Capture</Button>
+              <button
+                type="button"
+                className="bg-blue-500 text-white px-3 py-2 rounded-md m-2 shadow-lg hover:bg-blue-600"
+                onClick={startRecordingSet}
+              >
+                Start Capture
+              </button>
             )}
             {recordedChunks.length > 0 && handleSaveVideo()}
           </div>
@@ -126,11 +150,11 @@ const WebcamStreamCapture = () => {
           <div className="grid grid-flow-row grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {videos.map((videoURL, i) => (
               <div
-                key={`${letter}_${i + parseInt(number)}`}
+                key={`${letter}_${i + parseInt(index)}`}
                 className="flex-col mx-auto justify-center my-2"
               >
                 <h4 className="font-bold text-lg text-center p-2">
-                  {`${letter}_${i + parseInt(number)}`}
+                  {`${letter}_${i + parseInt(index)}`}
                 </h4>
                 <video
                   src={videoURL}
@@ -139,12 +163,23 @@ const WebcamStreamCapture = () => {
                   className="rounded-md mx-auto my-2"
                 />
                 <div className="flex justify-center">
-                  <Button handler={() => deleteVideo(videoURL)}>Delete</Button>
+                  <button
+                    type="button"
+                    className="bg-red-400 text-white px-3 py-2 rounded-md m-2 shadow-lg hover:bg-red-500"
+                    onClick={() => deleteVideo(videoURL)}
+                  >
+                    Delete
+                  </button>
                   <a
                     href={videoURL}
-                    download={`${letter}_${i + parseInt(number)}`}
+                    download={`${letter}_${i + parseInt(index)}`}
                   >
-                    <Button handler={() => {}}>Download</Button>
+                    <button
+                      type="button"
+                      className="bg-green-500 text-white px-3 py-2 rounded-md m-2 shadow-lg hover:bg-green-600"
+                    >
+                      Download
+                    </button>
                   </a>
                 </div>
               </div>
