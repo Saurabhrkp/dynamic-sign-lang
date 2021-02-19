@@ -13,7 +13,7 @@ const WebcamStreamCapture = () => {
   const [index, setIndex] = React.useState(0);
   const [videos, setVideos] = React.useState([]);
 
-  const handleStartCaptureClick = React.useCallback(() => {
+  const startCapture = React.useCallback(() => {
     setCapturing(true);
     mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
       mimeType: "video/webm",
@@ -23,7 +23,7 @@ const WebcamStreamCapture = () => {
       handleDataAvailable
     );
     mediaRecorderRef.current.start();
-    setTimeout(handleStopCaptureClick, 5000);
+    setTimeout(stopCaptureClick, 5000);
   }, [webcamRef, setCapturing, mediaRecorderRef]);
 
   const handleDataAvailable = React.useCallback(
@@ -35,12 +35,12 @@ const WebcamStreamCapture = () => {
     [setRecordedChunks]
   );
 
-  const handleStopCaptureClick = React.useCallback(async () => {
+  const stopCaptureClick = React.useCallback(async () => {
     mediaRecorderRef.current.stop();
     setCapturing(false);
   }, [mediaRecorderRef, webcamRef, setCapturing]);
 
-  const handleSaveVideo = React.useCallback(() => {
+  const saveVideo = React.useCallback(() => {
     if (recordedChunks.length) {
       const blob = new Blob(recordedChunks, {
         type: "video/mp4",
@@ -53,7 +53,7 @@ const WebcamStreamCapture = () => {
     }
   }, [recordedChunks]);
 
-  const saveAllRecording = React.useCallback(() => {
+  const saveAllRecordings = React.useCallback(() => {
     videos.map((url, i) => {
       const a = document.createElement("a");
       a.href = url;
@@ -70,10 +70,10 @@ const WebcamStreamCapture = () => {
 
   const startRecordingSet = React.useCallback(() => {
     let set = 1;
-    handleStartCaptureClick();
+    startCapture();
     const interval = setInterval(() => {
       if (set < captureSet) {
-        handleStartCaptureClick();
+        startCapture();
         set++;
       } else {
         return () => clearInterval(interval);
@@ -131,19 +131,15 @@ const WebcamStreamCapture = () => {
               />
             </label>
             {capturing ? (
-              <button type="button" className="btn btn-red animate-pulse">
+              <button className="btn btn-red animate-pulse">
                 Recording Set
               </button>
             ) : (
-              <button
-                type="button"
-                className="btn btn-blue"
-                onClick={startRecordingSet}
-              >
+              <button className="btn btn-blue" onClick={startRecordingSet}>
                 Start Capture
               </button>
             )}
-            {recordedChunks.length > 0 && handleSaveVideo()}
+            {recordedChunks.length > 0 && saveVideo()}
           </div>
           <h2 className="font-bold text-3xl text-center p-4">
             Recorded videos:
@@ -156,48 +152,44 @@ const WebcamStreamCapture = () => {
           {videos.length > 2 && (
             <div className="text-center">
               <button
-                type="button"
-                className="btn btn-green px-7 py-3 "
-                onClick={saveAllRecording}
+                className="btn btn-green px-7 py-3"
+                onClick={saveAllRecordings}
               >
                 Save All
               </button>
             </div>
           )}
           <div className="grid grid-flow-row grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-            {videos.map((videoURL, i) => (
-              <div
-                key={`${letter}_${i + parseInt(index)}`}
-                className="flex-col mx-auto justify-center my-2"
-              >
-                <h4 className="font-bold text-lg text-center p-2">
-                  {`${letter}_${i + parseInt(index)}`}
-                </h4>
-                <video
-                  src={videoURL}
-                  autoPlay
-                  loop
-                  className="rounded-md mx-auto my-2"
-                />
-                <div className="flex justify-center">
-                  <button
-                    type="button"
-                    className="btn btn-red"
-                    onClick={() => deleteVideo(videoURL)}
-                  >
-                    Delete
-                  </button>
-                  <a
-                    href={videoURL}
-                    download={`${letter}_${i + parseInt(index)}`}
-                  >
-                    <button type="button" className="btn btn-green">
-                      Download
+            {videos.map((videoURL, i) => {
+              let filename = `${letter}_${i + parseInt(index)}`;
+              return (
+                <div
+                  key={filename}
+                  className="flex-col mx-auto justify-center my-2"
+                >
+                  <h4 className="font-bold text-lg text-center p-2">
+                    {filename}
+                  </h4>
+                  <video
+                    src={videoURL}
+                    autoPlay
+                    loop
+                    className="rounded-md mx-auto my-2"
+                  />
+                  <div className="flex justify-center">
+                    <button
+                      className="btn btn-red"
+                      onClick={() => deleteVideo(videoURL)}
+                    >
+                      Delete
                     </button>
-                  </a>
+                    <a href={videoURL} download={filename}>
+                      <button className="btn btn-green">Download</button>
+                    </a>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
