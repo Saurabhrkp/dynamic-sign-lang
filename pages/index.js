@@ -95,10 +95,10 @@ const WebcamStreamCapture = () => {
             className="mx-auto my-8 w-auto h-auto lg:h-1/4 rounded-md"
           />
           <div className="flex justify-center">
-            <label className="text-xl font-semibold">
+            <label className="label">
               Record for:
               <select
-                className="border-4 border-blue-500 border-opacity-50 rounded-md m-2 py-1 shadow-lg focus:outline-none focus:ring-indigo-500 focus:border-blue-600 "
+                className="input"
                 value={letter}
                 onChange={(e) => setLetter(e.target.value)}
               >
@@ -109,10 +109,10 @@ const WebcamStreamCapture = () => {
                 ))}
               </select>
             </label>
-            <label className="text-xl font-semibold">
+            <label className="label">
               Starting index:
               <input
-                className="border-4 border-blue-500 border-opacity-50 rounded-md m-2 py-1 shadow-lg w-20 focus:outline-none focus:ring-indigo-500 focus:border-blue-600"
+                className="input"
                 type="number"
                 min="0"
                 value={index}
@@ -120,10 +120,10 @@ const WebcamStreamCapture = () => {
                 placeholder="0"
               />
             </label>
-            <label className="text-xl font-semibold">
+            <label className="label">
               Capture Set of:
               <input
-                className="border-4 border-blue-500 border-opacity-50 rounded-md m-2 py-1 shadow-lg w-20 focus:outline-none focus:ring-indigo-500 focus:border-blue-600"
+                className="input"
                 type="number"
                 min="4"
                 value={captureSet}
@@ -131,16 +131,13 @@ const WebcamStreamCapture = () => {
               />
             </label>
             {capturing ? (
-              <button
-                type="button"
-                className="bg-red-500 text-white font-semibold uppercase tracking-wider p-2 rounded-md m-2 shadow-lg hover:bg-red-600 animate-pulse"
-              >
+              <button type="button" className="btn btn-red animate-pulse">
                 Recording Set
               </button>
             ) : (
               <button
                 type="button"
-                className="bg-blue-500 text-white font-semibold uppercase tracking-wider p-2 rounded-md m-2 shadow-lg hover:bg-blue-600"
+                className="btn btn-blue"
                 onClick={startRecordingSet}
               >
                 Start Capture
@@ -160,7 +157,7 @@ const WebcamStreamCapture = () => {
             <div className="text-center">
               <button
                 type="button"
-                className="bg-green-600 text-white font-semibold uppercase tracking-wider px-7 py-3 rounded-md m-2 shadow-lg hover:bg-green-700"
+                className="btn btn-green px-7 py-3 "
                 onClick={saveAllRecording}
               >
                 Save All
@@ -185,7 +182,7 @@ const WebcamStreamCapture = () => {
                 <div className="flex justify-center">
                   <button
                     type="button"
-                    className="bg-red-400 text-white font-semibold uppercase tracking-wider p-2 rounded-md m-2 shadow-lg hover:bg-red-500"
+                    className="btn btn-red"
                     onClick={() => deleteVideo(videoURL)}
                   >
                     Delete
@@ -194,10 +191,7 @@ const WebcamStreamCapture = () => {
                     href={videoURL}
                     download={`${letter}_${i + parseInt(index)}`}
                   >
-                    <button
-                      type="button"
-                      className="bg-green-500 text-white font-semibold uppercase tracking-wider p-2 rounded-md m-2 shadow-lg hover:bg-green-600"
-                    >
+                    <button type="button" className="btn btn-green">
                       Download
                     </button>
                   </a>
