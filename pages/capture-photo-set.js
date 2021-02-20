@@ -2,6 +2,7 @@ import React from "react";
 import Webcam from "react-webcam";
 import Head from "next/head";
 import { options } from "../constants";
+import JSZip from "jszip";
 
 const WebcamStreamCapture = () => {
   const webcamRef = React.useRef(null);
@@ -18,14 +19,19 @@ const WebcamStreamCapture = () => {
     });
   }, [webcamRef]);
 
-  const saveAllPhotos = React.useCallback(() => {
+  const saveAllPhotos = React.useCallback(async () => {
+    let zip = new JSZip();
     photos.map((photoSrc, i) => {
-      const a = document.createElement("a");
-      a.href = photoSrc;
-      a.download = `${letter}_${i + parseInt(index)}`;
-      a.click();
+      let filename = `${i + parseInt(index)}.jpeg`;
+      let base64 = photoSrc.split(",")[1];
+      zip.file(filename, base64, { base64: true });
     });
-  }, [photos]);
+    let content = await zip.generateAsync({ type: "base64" });
+    const a = document.createElement("a");
+    a.href = "data:application/zip;base64," + content;
+    a.download = letter + ".zip";
+    a.click();
+  }, [photos, letter, index]);
 
   const deletePhoto = (photoSrc) => {
     setPhotos((prevState) => {
@@ -126,7 +132,7 @@ const WebcamStreamCapture = () => {
               </button>
             </div>
           )}
-          <div className="grid grid-flow-row grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+          <div className="grid grid-flow-row grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {photos.map((photoSrc, i) => {
               let filename = `${letter}_${i + parseInt(index)}`;
               return (
