@@ -5,86 +5,53 @@ import { options } from "../constants";
 
 const WebcamStreamCapture = () => {
   const webcamRef = React.useRef(null);
-  const mediaRecorderRef = React.useRef(null);
   const [capturing, setCapturing] = React.useState(false);
-  const [recordedChunks, setRecordedChunks] = React.useState([]);
   const [letter, setLetter] = React.useState("A");
   const [captureSet, setCaptureSet] = React.useState(10);
   const [index, setIndex] = React.useState(0);
-  const [videos, setVideos] = React.useState([]);
+  const [photos, setPhotos] = React.useState([]);
 
-  const startCapture = React.useCallback(() => {
-    setCapturing(true);
-    mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-      mimeType: "video/webm",
+  const capture = React.useCallback(() => {
+    const photoSrc = webcamRef.current.getScreenshot();
+    setPhotos((prevState) => {
+      return [...prevState, photoSrc];
     });
-    mediaRecorderRef.current.addEventListener(
-      "dataavailable",
-      handleDataAvailable
-    );
-    mediaRecorderRef.current.start();
-    setTimeout(stopCaptureClick, 5000);
-  }, [webcamRef, setCapturing, mediaRecorderRef]);
+  }, [webcamRef]);
 
-  const handleDataAvailable = React.useCallback(
-    ({ data }) => {
-      if (data.size > 0) {
-        setRecordedChunks((prev) => prev.concat(data));
-      }
-    },
-    [setRecordedChunks]
-  );
-
-  const stopCaptureClick = React.useCallback(async () => {
-    mediaRecorderRef.current.stop();
-    setCapturing(false);
-  }, [mediaRecorderRef, webcamRef, setCapturing]);
-
-  const saveVideo = React.useCallback(() => {
-    if (recordedChunks.length) {
-      const blob = new Blob(recordedChunks, {
-        type: "video/mp4",
-      });
-      const url = URL.createObjectURL(blob);
-      setVideos((prevState) => {
-        return [...prevState, url];
-      });
-      setRecordedChunks([]);
-    }
-  }, [recordedChunks]);
-
-  const saveAllRecordings = React.useCallback(() => {
-    videos.map((url, i) => {
+  const saveAllPhotos = React.useCallback(() => {
+    photos.map((photoSrc, i) => {
       const a = document.createElement("a");
-      a.href = url;
+      a.href = photoSrc;
       a.download = `${letter}_${i + parseInt(index)}`;
       a.click();
     });
-  }, [videos]);
+  }, [photos]);
 
-  const deleteVideo = (videoURL) => {
-    setVideos((prevState) => {
-      return prevState.filter((v) => v !== videoURL);
+  const deletePhoto = (photoSrc) => {
+    setPhotos((prevState) => {
+      return prevState.filter((photo) => photo !== photoSrc);
     });
   };
 
-  const startRecordingSet = React.useCallback(() => {
+  const startCapturingSet = React.useCallback(() => {
     let set = 1;
-    startCapture();
+    setCapturing(true);
+    capture();
     const interval = setInterval(() => {
       if (set < captureSet) {
-        startCapture();
+        capture();
         set++;
       } else {
+        setCapturing(false);
         return () => clearInterval(interval);
       }
-    }, 8000);
-  }, [captureSet]);
+    }, 3000);
+  }, [captureSet, setCapturing]);
 
   return (
     <>
       <Head>
-        <title>Capture Video for dataset</title>
+        <title>Capture Photo for dataset</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="container mx-auto p-0 md:p-6 lg:p-10">
@@ -131,36 +98,35 @@ const WebcamStreamCapture = () => {
               />
             </label>
             {capturing ? (
-              <button className="btn btn-red animate-pulse">
-                Recording Set
+              <button className="btn btn-red animate-pulse" disabled>
+                Capturing Set
               </button>
             ) : (
-              <button className="btn btn-blue" onClick={startRecordingSet}>
+              <button className="btn btn-blue" onClick={startCapturingSet}>
                 Start Capture
               </button>
             )}
-            {recordedChunks.length > 0 && saveVideo()}
           </div>
           <h2 className="font-bold text-3xl text-center p-4">
-            Recorded videos:
+            Captured photos:
           </h2>
-          {!videos.length && (
+          {!photos.length && (
             <h3 className="font-bold text-2xl text-center p-4">
-              Start recording to get dataset
+              Start capturing to get dataset
             </h3>
           )}
-          {videos.length > 2 && (
+          {photos.length > 2 && (
             <div className="text-center">
               <button
                 className="btn btn-green px-7 py-3"
-                onClick={saveAllRecordings}
+                onClick={saveAllPhotos}
               >
                 Save All
               </button>
             </div>
           )}
           <div className="grid grid-flow-row grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-            {videos.map((videoURL, i) => {
+            {photos.map((photoSrc, i) => {
               let filename = `${letter}_${i + parseInt(index)}`;
               return (
                 <div
@@ -170,20 +136,15 @@ const WebcamStreamCapture = () => {
                   <h4 className="font-bold text-lg text-center p-2">
                     {filename}
                   </h4>
-                  <video
-                    src={videoURL}
-                    autoPlay
-                    loop
-                    className="rounded-md mx-auto my-2"
-                  />
+                  <img src={photoSrc} className="rounded-md mx-auto my-2" />
                   <div className="flex justify-center">
                     <button
                       className="btn btn-red"
-                      onClick={() => deleteVideo(videoURL)}
+                      onClick={() => deletePhoto(photoSrc)}
                     >
                       Delete
                     </button>
-                    <a href={videoURL} download={filename}>
+                    <a href={photoSrc} download={filename}>
                       <button className="btn btn-green">Download</button>
                     </a>
                   </div>
