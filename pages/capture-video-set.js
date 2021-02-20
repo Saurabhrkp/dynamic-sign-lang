@@ -1,6 +1,8 @@
 import React from "react";
 import Webcam from "react-webcam";
 import Head from "next/head";
+import JSZip from "jszip";
+
 import { options } from "../constants";
 
 const WebcamStreamCapture = () => {
@@ -53,14 +55,33 @@ const WebcamStreamCapture = () => {
     }
   }, [recordedChunks]);
 
-  const saveAllRecordings = React.useCallback(() => {
-    videos.map((url, i) => {
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${letter}_${i + parseInt(index)}`;
-      a.click();
+  const blobToBase64 = async (url) => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const reader = new FileReader();
+    await new Promise((resolve, reject) => {
+      reader.onload = resolve;
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
     });
-  }, [videos]);
+    return reader.result.replace(/^data:.+;base64,/, "");
+  };
+
+  const saveAllRecordings = React.useCallback(async () => {
+    let zip = new JSZip();
+    await Promise.all(
+      videos.map(async (url, i) => {
+        let filename = `${i + parseInt(index)}.mp4`;
+        let base64 = await blobToBase64(url);
+        zip.file(filename, base64, { base64: true });
+      })
+    );
+    let content = await zip.generateAsync({ type: "base64" });
+    const a = document.createElement("a");
+    a.href = "data:application/zip;base64," + content;
+    a.download = letter + ".zip";
+    a.click();
+  }, [videos, letter, index]);
 
   const deleteVideo = (videoURL) => {
     setVideos((prevState) => {
@@ -159,7 +180,7 @@ const WebcamStreamCapture = () => {
               </button>
             </div>
           )}
-          <div className="grid grid-flow-row grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+          <div className="grid grid-flow-row grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {videos.map((videoURL, i) => {
               let filename = `${letter}_${i + parseInt(index)}`;
               return (

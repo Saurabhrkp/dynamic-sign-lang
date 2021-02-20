@@ -1,8 +1,9 @@
 import React from "react";
 import Webcam from "react-webcam";
 import Head from "next/head";
-import { options } from "../constants";
 import JSZip from "jszip";
+
+import { options } from "../constants";
 
 const WebcamStreamCapture = () => {
   const webcamRef = React.useRef(null);
