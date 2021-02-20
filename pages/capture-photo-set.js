@@ -59,6 +59,7 @@ const WebcamStreamCapture = () => {
           <Webcam
             audio={false}
             ref={webcamRef}
+            screenshotFormat="image/jpeg"
             className="mx-auto my-8 w-auto h-auto lg:h-1/4 rounded-md"
           />
           <div className="flex justify-center">
