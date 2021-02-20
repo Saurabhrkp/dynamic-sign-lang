@@ -1,204 +1,81 @@
-import React from 'react';
-import Webcam from 'react-webcam';
-import Head from 'next/head';
-import { options } from '../constants';
+import Head from "next/head";
+import Link from "next/link";
 
-const WebcamStreamCapture = () => {
-  const webcamRef = React.useRef(null);
-  const mediaRecorderRef = React.useRef(null);
-  const [capturing, setCapturing] = React.useState(false);
-  const [recordedChunks, setRecordedChunks] = React.useState([]);
-  const [letter, setLetter] = React.useState('A');
-  const [captureSet, setCaptureSet] = React.useState(10);
-  const [index, setIndex] = React.useState(0);
-  const [videos, setVideos] = React.useState([]);
-
-  const startCapture = React.useCallback(() => {
-    setCapturing(true);
-    mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-      mimeType: 'video/webm',
-    });
-    mediaRecorderRef.current.addEventListener(
-      'dataavailable',
-      handleDataAvailable
-    );
-    mediaRecorderRef.current.start();
-    setTimeout(stopCaptureClick, 5000);
-  }, [webcamRef, setCapturing, mediaRecorderRef]);
-
-  const handleDataAvailable = React.useCallback(
-    ({ data }) => {
-      if (data.size > 0) {
-        setRecordedChunks((prev) => prev.concat(data));
-      }
-    },
-    [setRecordedChunks]
-  );
-
-  const stopCaptureClick = React.useCallback(async () => {
-    mediaRecorderRef.current.stop();
-    setCapturing(false);
-  }, [mediaRecorderRef, webcamRef, setCapturing]);
-
-  const saveVideo = React.useCallback(() => {
-    if (recordedChunks.length) {
-      const blob = new Blob(recordedChunks, {
-        type: 'video/mp4',
-      });
-      const url = URL.createObjectURL(blob);
-      setVideos((prevState) => {
-        return [...prevState, url];
-      });
-      setRecordedChunks([]);
-    }
-  }, [recordedChunks]);
-
-  const saveAllRecordings = React.useCallback(() => {
-    videos.map((url, i) => {
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${letter}_${i + parseInt(index)}`;
-      a.click();
-    });
-  }, [videos]);
-
-  const deleteVideo = (videoURL) => {
-    setVideos((prevState) => {
-      return prevState.filter((v) => v !== videoURL);
-    });
-  };
-
-  const startRecordingSet = React.useCallback(() => {
-    let set = 1;
-    startCapture();
-    const interval = setInterval(() => {
-      if (set < captureSet) {
-        startCapture();
-        set++;
-      } else {
-        return () => clearInterval(interval);
-      }
-    }, 8000);
-  }, [captureSet]);
-
+const Home = () => {
   return (
-    <>
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
-        <title>Capture Video for dataset</title>
+        <title>Sign Language Detection</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="container mx-auto p-0 md:p-6 lg:p-10">
-        <h1 className="font-bold text-2xl text-center p-4">
-          Video dataset capture
+
+      <main className="flex flex-col items-center justify-center flex-1 text-center">
+        <h1 className="text-5xl font-bold">
+          Welcome to <a className="text-blue-600">Sign Language Detection</a>
         </h1>
-        <div className="bg-gray-100 p-6 rounded-md shadow-lg">
-          <Webcam
-            audio={false}
-            ref={webcamRef}
-            className="mx-auto my-8 w-auto h-auto lg:h-1/4 rounded-md"
-          />
-          <div className="flex justify-center">
-            <label className="label">
-              Record for:
-              <label
-                className="label"
-                value={letter}
-                onChange={(e) => setLetter(e.target.value)}
-              >
-                <input className="input" type="string" />
-                {/* {options.map((value) => (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                ))} */}
-              </label>
-            </label>
-            <label className="label">
-              Starting index:
-              <input
-                className="input"
-                type="number"
-                min="0"
-                value={index}
-                onChange={(e) => setIndex(e.target.value)}
-                placeholder="0"
-              />
-            </label>
-            <label className="label">
-              Capture Set of:
-              <input
-                className="input"
-                type="number"
-                min="1"
-                value={captureSet}
-                onChange={(e) => setCaptureSet(e.target.value)}
-              />
-            </label>
-            {capturing ? (
-              <button className="btn btn-red animate-pulse">
-                Recording Set
-              </button>
-            ) : (
-              <button className="btn btn-blue" onClick={startRecordingSet}>
-                Start Capture
-              </button>
-            )}
-            {recordedChunks.length > 0 && saveVideo()}
-          </div>
-          <h2 className="font-bold text-3xl text-center p-4">
-            Recorded videos:
-          </h2>
-          {!videos.length && (
-            <h3 className="font-bold text-2xl text-center p-4">
-              Start recording to get dataset
-            </h3>
-          )}
-          {videos.length > 2 && (
-            <div className="text-center">
-              <button
-                className="btn btn-green px-7 py-3"
-                onClick={saveAllRecordings}
-              >
-                Save All
-              </button>
-            </div>
-          )}
-          <div className="grid grid-flow-row grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-            {videos.map((videoURL, i) => {
-              let filename = `${letter}_${i + parseInt(index)}`;
-              return (
-                <div
-                  key={filename}
-                  className="flex-col mx-auto justify-center my-2"
-                >
-                  <h4 className="font-bold text-lg text-center p-2">
-                    {filename}
-                  </h4>
-                  <video
-                    src={videoURL}
-                    autoPlay
-                    loop
-                    className="rounded-md mx-auto my-2"
-                  />
-                  <div className="flex justify-center">
-                    <button
-                      className="btn btn-red"
-                      onClick={() => deleteVideo(videoURL)}
-                    >
-                      Delete
-                    </button>
-                    <a href={videoURL} download={filename}>
-                      <button className="btn btn-green">Download</button>
-                    </a>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+
+        <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
+          <Link href="/">
+            <a className="card">
+              <h3 className="text-2xl font-bold">
+                Static Sign Language Detection &rarr;
+              </h3>
+              <p className="mt-4 text-xl">
+                For detecting Static Signs click here!
+              </p>
+            </a>
+          </Link>
+          <Link href="/">
+            <a className="card">
+              <h3 className="text-2xl font-bold">
+                Dynamic Sign Language Detection &rarr;
+              </h3>
+              <p className="mt-4 text-xl">
+                For detecting Dynamic Signs click here!
+              </p>
+            </a>
+          </Link>
+          <Link href="/capture-photo-set">
+            <a className="card">
+              <h3 className="text-2xl font-bold">
+                Capture Static Dataset &rarr;
+              </h3>
+              <p className="mt-4 text-xl">
+                For capturing static dataset click here!
+              </p>
+            </a>
+          </Link>
+          <Link href="/capture-video-set">
+            <a className="card">
+              <h3 className="text-2xl font-bold">
+                Capture Dynamic Dataset &rarr;
+              </h3>
+              <p className="mt-4 text-xl">
+                For capturing Dynamic dataset click here!
+              </p>
+            </a>
+          </Link>
         </div>
-      </div>
-    </>
+      </main>
+
+      <footer className="flex items-center justify-center w-full h-24 border-t">
+        <Link href="https://www.tensorflow.org/js">
+          <a
+            className="flex items-center justify-center"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Powered by
+            <img
+              src="/tensorflow.svg"
+              alt="Tensorflowjs Logo"
+              className="h-4 ml-2"
+            />
+          </a>
+        </Link>
+      </footer>
+    </div>
   );
 };
 
-export default WebcamStreamCapture;
+export default Home;
