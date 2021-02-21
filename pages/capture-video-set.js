@@ -108,110 +108,114 @@ const WebcamStreamCapture = () => {
         <title>Capture Video for dataset</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="container mx-auto p-0 md:p-6 lg:p-10">
-        <div className="bg-gray-100 p-6 rounded-md shadow-lg">
-          <Webcam
-            audio={false}
-            ref={webcamRef}
-            className="mx-auto my-8 w-auto h-auto lg:h-1/4 rounded-md"
-          />
-          <div className="flex justify-center">
-            <label className="label">
-              Record for:
-              <select
-                className="input"
-                value={letter}
-                onChange={(e) => setLetter(e.target.value)}
-              >
-                {options.map((value) => (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="label">
-              Starting index:
-              <input
-                className="input"
-                type="number"
-                min="0"
-                value={index}
-                onChange={(e) => setIndex(e.target.value)}
-                placeholder="0"
-              />
-            </label>
-            <label className="label">
-              Capture Set of:
-              <input
-                className="input"
-                type="number"
-                min="4"
-                value={captureSet}
-                onChange={(e) => setCaptureSet(e.target.value)}
-              />
-            </label>
-            {capturing ? (
-              <button className="btn btn-red animate-pulse">
+      <div className="min-h-screen min-w-min flex-container flex-col bg-gray-100 p-10">
+        <Webcam
+          className="my-4 w-auto h-auto lg:h-1/4 rounded-md shadow-lg"
+          audio={false}
+          ref={webcamRef}
+        />
+        <div className="flex-container">
+          <label className="label">
+            Record for:
+            <select
+              className="input"
+              value={letter}
+              onChange={(e) => setLetter(e.target.value)}
+            >
+              {options.map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="label">
+            Starting index:
+            <input
+              className="input"
+              type="number"
+              min="0"
+              value={index}
+              onChange={(e) => setIndex(e.target.value)}
+              placeholder="0"
+            />
+          </label>
+          <label className="label">
+            Capture Set of:
+            <input
+              className="input"
+              type="number"
+              min="4"
+              value={captureSet}
+              onChange={(e) => setCaptureSet(e.target.value)}
+            />
+          </label>
+        </div>
+        <div className="flex-container flex-col">
+          {capturing ? (
+            <>
+              <button className="rounded-full h-16 w-16 btn btn-red animate-pulse" />
+              <h1 className="font-semibold font-mono text-xl text-center text-red-500">
                 Recording Set
-              </button>
-            ) : (
-              <button className="btn btn-blue" onClick={startRecordingSet}>
+              </h1>
+            </>
+          ) : (
+            <>
+              <button
+                className="rounded-full h-16 w-16 btn btn-blue"
+                onClick={startRecordingSet}
+              />
+              <h1 className="font-semibold font-mono text-xl text-center text-blue-500">
                 Start Capture
-              </button>
-            )}
-            {recordedChunks.length > 0 && saveVideo()}
-          </div>
-          <h2 className="font-bold text-3xl text-center p-4">
+              </h1>
+            </>
+          )}
+          {recordedChunks.length > 0 && saveVideo()}
+        </div>
+        <div className="flex-container flex-row">
+          <h2 className="font-semibold text-lg md:text-3xl text-center p-4">
             Recorded videos:
           </h2>
-          {!videos.length && (
-            <h3 className="font-bold text-2xl text-center p-4">
+          {!videos.length ? (
+            <h3 className="font-semibold text-lg md:text-2xl text-center p-4">
               Start recording to get dataset
             </h3>
-          )}
-          {videos.length > 2 && (
+          ) : (
             <div className="text-center">
               <button
-                className="btn btn-green px-7 py-3"
+                className="btn btn-green px-5 py-2"
                 onClick={saveAllRecordings}
               >
                 Save All
               </button>
             </div>
           )}
-          <div className="grid grid-flow-row grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
-            {videos.map((videoURL, i) => {
-              let filename = `${letter}_${i + parseInt(index)}`;
-              return (
-                <div
-                  key={filename}
-                  className="flex-col mx-auto justify-center my-2"
-                >
-                  <h4 className="font-bold text-lg text-center p-2">
-                    {filename}
-                  </h4>
-                  <video
-                    src={videoURL}
-                    autoPlay
-                    loop
-                    className="rounded-md mx-auto my-2"
-                  />
-                  <div className="flex justify-center">
-                    <button
-                      className="btn btn-red"
-                      onClick={() => deleteVideo(videoURL)}
-                    >
-                      Delete
-                    </button>
-                    <a href={videoURL} download={filename}>
-                      <button className="btn btn-green">Download</button>
-                    </a>
-                  </div>
+        </div>
+        <div className="grid-container m-8">
+          {videos.map((videoURL, i) => {
+            let filename = `${letter}_${i + parseInt(index)}`;
+            return (
+              <div key={filename} className="flex-container flex-col space-y-2">
+                <video
+                  src={videoURL}
+                  autoPlay
+                  loop
+                  className="rounded-md shadow-lg"
+                />
+                <div className="flex-container">
+                  <button
+                    className="btn btn-red"
+                    onClick={() => deleteVideo(videoURL)}
+                  >
+                    Delete
+                  </button>
+                  <a href={videoURL} download={filename}>
+                    <button className="btn btn-green">Download</button>
+                  </a>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </>
