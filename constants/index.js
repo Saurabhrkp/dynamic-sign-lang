@@ -25,4 +25,5 @@ export const options = [
   "X",
   "Y",
   "Z",
+  "Blank",
 ];

@@ -1,7 +1,7 @@
-import React from 'react';
-import Webcam from 'react-webcam';
-import Head from 'next/head';
-import * as tf from '@tensorflow/tfjs';
+import React from "react";
+import Webcam from "react-webcam";
+import Head from "next/head";
+import * as tf from "@tensorflow/tfjs";
 
 const StaticSign = () => {
   const webcamRef = React.useRef(null);

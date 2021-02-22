@@ -3,6 +3,12 @@ import Webcam from "react-webcam";
 import Head from "next/head";
 import { options } from "../constants";
 
+const videoConstraints = {
+  width: 280,
+  height: 280,
+  mirrored: true,
+};
+
 const WebcamStreamCapture = () => {
   const webcamRef = React.useRef(null);
   const [capturing, setCapturing] = React.useState(false);
@@ -45,7 +51,7 @@ const WebcamStreamCapture = () => {
         setCapturing(false);
         return () => clearInterval(interval);
       }
-    }, 3000);
+    }, 300);
   }, [captureSet, setCapturing]);
 
   return (
@@ -59,8 +65,9 @@ const WebcamStreamCapture = () => {
           <Webcam
             audio={false}
             ref={webcamRef}
+            videoConstraints={videoConstraints}
             screenshotFormat="image/jpeg"
-            className="mx-auto my-8 w-auto h-auto lg:h-1/4 rounded-md"
+            className="mx-auto my-8 w-auto h-auto lg:h-3/4 rounded-md"
           />
           <div className="flex justify-center">
             <label className="label">
