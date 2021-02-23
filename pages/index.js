@@ -3,13 +3,13 @@ import Link from "next/link";
 
 const Home = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+    <div className="flex flex-col items-center justify-center min-h-screen pt-7">
       <Head>
         <title>Sign Language Detection</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex flex-col items-center justify-center flex-1 text-center">
+      <main className="flex flex-col items-center justify-center flex-1 text-center py-3">
         <h1 className="text-5xl font-bold">
           Welcome to <a className="text-blue-600">Sign Language Detection</a>
         </h1>
