@@ -1,21 +1,17 @@
-import Head from "next/head";
-import Link from "next/link";
+import Meta from "../components/Meta";
+import Link from "next/Link";
 
 const Home = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen pt-7">
-      <Head>
-        <title>Sign Language Detection</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className="flex flex-col items-center justify-center flex-1 text-center py-3">
+      <Meta title={"Sign Language Detection"} />
+      <main className="flex flex-col items-center justify-center flex-1 py-3 text-center">
         <h1 className="text-5xl font-bold">
           Welcome to <a className="text-blue-600">Sign Language Detection</a>
         </h1>
 
         <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
-          <Link href="/">
+          <Link href="/detect-static-signs">
             <a className="card">
               <h3 className="text-2xl font-bold">
                 Static Sign Language Detection &rarr;
@@ -57,7 +53,6 @@ const Home = () => {
           </Link>
         </div>
       </main>
-
       <footer className="flex items-center justify-center w-full h-24 border-t">
         <Link href="https://www.tensorflow.org/js">
           <a
