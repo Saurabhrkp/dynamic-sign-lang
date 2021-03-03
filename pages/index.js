@@ -3,7 +3,7 @@ import Link from "next/Link";
 
 const Home = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen pt-7">
+    <>
       <Meta title={"Sign Language Detection"} />
       <main className="flex flex-col items-center justify-center flex-1 py-3 text-center">
         <h1 className="text-5xl font-bold">
@@ -69,7 +69,7 @@ const Home = () => {
           </a>
         </Link>
       </footer>
-    </div>
+    </>
   );
 };
 
