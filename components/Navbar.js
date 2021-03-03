@@ -2,15 +2,13 @@ import React from "react";
 import Link from "next/Link";
 
 const Navbar = () => {
-  // if (typeof window !== "undefined") {
-  // grab everything we need
-  const btn = document.querySelector("button.mobile-menu-button");
-  const menu = document.querySelector(".mobile-menu");
-  // add event listeners
-  btn.addEventListener("click", () => {
-    menu.classList.toggle("hidden");
-  });
-  // }
+  const [show, setShow] = React.useState(false);
+
+  const switchMenu = React.useCallback(() => {
+    setShow((prevState) => {
+      return !prevState;
+    });
+  }, [show]);
 
   const videoSvg = (
     <svg
@@ -47,7 +45,7 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="bg-gray-100">
+    <nav className="fixed inset-x-0 bg-gray-200">
       <div className="max-w-6xl px-4 mx-auto">
         <div className="flex justify-between">
           <div className="flex space-x-4">
@@ -99,7 +97,7 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center md:hidden">
-            <button className="mobile-menu-button">
+            <button className="mobile-menu-button" onClick={switchMenu}>
               <svg
                 className="w-6 h-6"
                 xmlns="http://www.w3.org/2000/svg"
@@ -119,27 +117,39 @@ const Navbar = () => {
         </div>
       </div>
 
-      <div className="hidden mobile-menu md:hidden">
+      <div className={`${show ? "" : "hidden"} mobile-menu md:hidden`}>
         <Link href="/capture-photo-set">
-          <a className="items-center block px-4 py-2 space-x-2 text-sm hover:bg-gray-200">
+          <a
+            className="items-center block p-2 space-x-2 text-sm hover:bg-gray-200"
+            onClick={switchMenu}
+          >
             {photoSvg}
             <span> Capture Static dataset</span>
           </a>
         </Link>
         <Link href="/capture-video-set">
-          <a className="items-center block px-4 py-2 space-x-2 text-sm hover:bg-gray-200">
+          <a
+            className="items-center block p-2 space-x-2 text-sm hover:bg-gray-200"
+            onClick={switchMenu}
+          >
             {videoSvg}
             <span> Capture Dynamic dataset</span>
           </a>
         </Link>
         <Link href="/detect-static-signs">
-          <a className="items-center block px-4 py-2 space-x-2 text-sm hover:bg-gray-200">
+          <a
+            className="items-center block p-2 space-x-2 text-sm hover:bg-gray-200"
+            onClick={switchMenu}
+          >
             {videoSvg}
             <span> Detect Dynamic</span>
           </a>
         </Link>
         <Link href="/detect-static-signs">
-          <a className="items-center block px-4 py-2 space-x-2 text-sm hover:bg-gray-200">
+          <a
+            className="items-center block p-2 space-x-2 text-sm hover:bg-gray-200"
+            onClick={switchMenu}
+          >
             {photoSvg}
             <span> Detect Static</span>
           </a>
