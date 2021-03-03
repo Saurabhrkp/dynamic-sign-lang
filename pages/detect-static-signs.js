@@ -1,6 +1,6 @@
 import React from "react";
 import Webcam from "react-webcam";
-import Head from "next/head";
+import Meta from "../components/Meta";
 import * as tf from "@tensorflow/tfjs";
 
 const StaticSign = () => {
@@ -14,21 +14,18 @@ const StaticSign = () => {
     }
   }, []);
   return (
-    <div>
-      <Head>
-        <title>Static Sign Language Recognition</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <div className="container mx-auto p-0 md:p-6 lg:p-10">
-        <div className="bg-gray-100 p-6 rounded-md shadow-lg">
+    <>
+      <Meta title={"Static Sign Language Recognition"} />
+      <div className="container p-0 mx-auto md:p-6 lg:p-10">
+        <div className="p-6 bg-gray-100 rounded-md shadow-lg">
           <Webcam
             audio={false}
             ref={webcamRef}
-            className="mx-auto my-8 w-auto h-auto lg:h-1/4 rounded-md"
+            className="w-auto h-auto mx-auto my-8 rounded-md lg:h-1/4"
           />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

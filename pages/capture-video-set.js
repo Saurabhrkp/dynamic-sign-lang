@@ -1,6 +1,6 @@
 import React from "react";
 import Webcam from "react-webcam";
-import Head from "next/head";
+import Meta from "../components/Meta";
 import JSZip from "jszip";
 
 import { options } from "../constants";
@@ -104,13 +104,10 @@ const WebcamStreamCapture = () => {
 
   return (
     <>
-      <Head>
-        <title>Capture Video for dataset</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <div className="min-h-screen min-w-min flex-container flex-col bg-gray-100 p-10">
+      <Meta title={"Capture Video for dataset"} />
+      <div className="flex-col min-h-screen p-10 bg-gray-100 min-w-min flex-container">
         <Webcam
-          className="my-4 w-auto h-auto lg:h-1/4 rounded-md shadow-lg"
+          className="w-auto h-auto my-4 rounded-md shadow-lg lg:h-1/4"
           audio={false}
           ref={webcamRef}
         />
@@ -151,39 +148,39 @@ const WebcamStreamCapture = () => {
             />
           </label>
         </div>
-        <div className="flex-container flex-col">
+        <div className="flex-col flex-container">
           {capturing ? (
             <>
-              <button className="rounded-full h-16 w-16 btn btn-red animate-pulse" />
-              <h1 className="font-semibold font-mono text-xl text-center text-red-500">
+              <button className="w-16 h-16 rounded-full btn btn-red animate-pulse" />
+              <h1 className="font-mono text-xl font-semibold text-center text-red-500">
                 Recording Set
               </h1>
             </>
           ) : (
             <>
               <button
-                className="rounded-full h-16 w-16 btn btn-blue"
+                className="w-16 h-16 rounded-full btn btn-blue"
                 onClick={startRecordingSet}
               />
-              <h1 className="font-semibold font-mono text-xl text-center text-blue-500">
+              <h1 className="font-mono text-xl font-semibold text-center text-blue-500">
                 Start Capture
               </h1>
             </>
           )}
           {recordedChunks.length > 0 && saveVideo()}
         </div>
-        <div className="flex-container flex-row">
-          <h2 className="font-semibold text-lg md:text-3xl text-center p-4">
+        <div className="flex-row flex-container">
+          <h2 className="p-4 text-lg font-semibold text-center md:text-3xl">
             Recorded videos:
           </h2>
           {!videos.length ? (
-            <h3 className="font-semibold text-lg md:text-2xl text-center p-4">
+            <h3 className="p-4 text-lg font-semibold text-center md:text-2xl">
               Start recording to get dataset
             </h3>
           ) : (
             <div className="text-center">
               <button
-                className="btn btn-green px-5 py-2"
+                className="px-5 py-2 btn btn-green"
                 onClick={saveAllRecordings}
               >
                 Save All
@@ -191,11 +188,11 @@ const WebcamStreamCapture = () => {
             </div>
           )}
         </div>
-        <div className="grid-container m-8">
+        <div className="m-8 grid-container">
           {videos.map((videoURL, i) => {
             let filename = `${letter}_${i + parseInt(index)}`;
             return (
-              <div key={filename} className="flex-container flex-col space-y-2">
+              <div key={filename} className="flex-col space-y-2 flex-container">
                 <video
                   src={videoURL}
                   autoPlay

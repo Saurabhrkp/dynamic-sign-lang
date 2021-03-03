@@ -4,7 +4,7 @@
 
 @layer components {
   .btn {
-    @apply font-semibold font-mono tracking-wider p-2 rounded-md m-2 shadow-lg text-white;
+    @apply p-2 m-2 font-mono font-semibold tracking-wider text-white rounded-md shadow-lg;
   }
   .btn-blue {
     @apply bg-blue-500 hover:bg-blue-600;
@@ -16,10 +16,10 @@
     @apply bg-green-500 hover:bg-green-600;
   }
   .label {
-    @apply flex items-center justify-center flex-col md:flex-row m-2 text-center text-base md:text-xl font-semibold;
+    @apply flex flex-col items-center justify-center m-2 text-base font-semibold text-center md:flex-row md:text-xl;
   }
   .input {
-    @apply border-4 border-blue-500 border-opacity-50 text-center w-16 rounded-md m-2 py-1 shadow-lg focus:outline-none focus:ring-indigo-500 focus:border-blue-600;
+    @apply w-16 py-1 m-2 text-center border-4 border-blue-500 border-opacity-50 rounded-md shadow-lg focus:outline-none focus:ring-indigo-500 focus:border-blue-600;
   }
   .card {
     @apply p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600;
@@ -28,6 +28,6 @@
     @apply flex items-center justify-center;
   }
   .grid-container {
-    @apply grid grid-flow-row grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3;
+    @apply grid grid-flow-row grid-cols-1 gap-3 md:grid-cols-3 lg:grid-cols-4;
   }
 }
