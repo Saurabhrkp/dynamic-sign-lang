@@ -1,13 +1,12 @@
 import React from "react";
 import Webcam from "react-webcam";
 import Meta from "../components/Meta";
-import * as tf from "@tensorflow/tfjs";
 
 const StaticSign = () => {
   const webcamRef = React.useRef(null);
   const [status, setStatus] = React.useState(true);
 
-  const detect = async (net) => {
+  const detect = async () => {
     // Check data is available
     if (
       typeof webcamRef.current !== "undefined" &&
@@ -24,24 +23,6 @@ const StaticSign = () => {
       webcamRef.current.video.height = videoHeight;
 
       // Make Detections
-      const img = tf.browser.fromPixels(video);
-      const resized = tf.image.resizeBilinear(img, [null, 128, 128, 1]);
-      const casted = resized.cast("int32");
-      const expanded = casted.expandDims(0);
-      const obj = await net.predict(expanded);
-      console.log(obj);
-
-      const boxes = await obj[1].array();
-      const classes = await obj[2].array();
-      const scores = await obj[4].array();
-
-      console.log(boxes[0], classes[0], scores[0], 0.8);
-
-      tf.dispose(img);
-      tf.dispose(resized);
-      tf.dispose(casted);
-      tf.dispose(expanded);
-      tf.dispose(obj);
     }
   };
 
@@ -53,17 +34,13 @@ const StaticSign = () => {
     try {
       setStatus(false);
       // Load network
-      const net = await tf.loadLayersModel("/model/model.json");
-      console.log({ net });
       // Loop and detect hands
-      console.log({ status });
       const interval = setInterval(async () => {
         if (status) {
-          await detect(net);
         } else {
           return () => clearInterval(interval);
         }
-      }, 16000); // long interval for development
+      }, 100); // long interval for development
     } catch (error) {
       console.log(error);
     }
@@ -91,8 +68,3 @@ const StaticSign = () => {
 };
 
 export default StaticSign;
-
-// Unhandled Runtime Error
-// Error: Error when checking : expected conv2d_input to have shape [null,128,128,1] but got array with shape [1,640,480,3].
-// Unhandled Runtime Error
-// Error: Error in resizeBilinear: new shape must 2D, but got shape ,128,128,1.
