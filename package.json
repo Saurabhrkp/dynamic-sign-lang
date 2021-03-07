@@ -8,9 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
-    "@tensorflow/tfjs": "^2.8.6",
     "autoprefixer": "^10.2.4",
     "jszip": "^3.6.0",
+    "ml5": "^0.6.1",
     "next": "10.0.6",
     "postcss": "^8.2.6",
     "react": "17.0.1",
