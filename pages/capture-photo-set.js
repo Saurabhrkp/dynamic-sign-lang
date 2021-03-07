@@ -41,6 +41,12 @@ const CapturePhotoSet = () => {
     a.click();
   }, [photos, letter, index]);
 
+  const clearAllPhotos = React.useCallback(() => {
+    setPhotos([]);
+    setCapturing(false);
+    setIndex(0);
+  }, [photos, capturing, index]);
+
   const deletePhoto = React.useCallback(
     (photoSrc) => {
       setPhotos((prevState) => {
@@ -145,6 +151,9 @@ const CapturePhotoSet = () => {
           <div className="text-center">
             <button className="px-5 py-2 btn btn-green" onClick={saveAllPhotos}>
               Save All
+            </button>
+            <button className="px-5 py-2 btn btn-red" onClick={clearAllPhotos}>
+              Clear All
             </button>
           </div>
         )}

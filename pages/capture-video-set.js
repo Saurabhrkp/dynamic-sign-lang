@@ -90,6 +90,12 @@ const CaptureVideoStream = () => {
     a.click();
   }, [videos, letter, index]);
 
+  const clearAllVideos = React.useCallback(() => {
+    setVideos([]);
+    setCapturing(false);
+    setIndex(0);
+  }, [videos, capturing, index]);
+
   const deleteVideo = (videoURL) => {
     setVideos((prevState) => {
       return prevState.filter((v) => v !== videoURL);
@@ -192,6 +198,9 @@ const CaptureVideoStream = () => {
               onClick={saveAllRecordings}
             >
               Save All
+            </button>
+            <button className="px-5 py-2 btn btn-red" onClick={clearAllVideos}>
+              Clear All
             </button>
           </div>
         )}
