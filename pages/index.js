@@ -51,6 +51,26 @@ const Home = () => {
               </p>
             </a>
           </Link>
+          <Link href="/train-for-static">
+            <a className="card">
+              <h3 className="text-2xl font-bold">
+                Train for Static Dataset &rarr;
+              </h3>
+              <p className="mt-4 text-xl">
+                For training static model click here!
+              </p>
+            </a>
+          </Link>
+          <Link href="/train-for-static">
+            <a className="card">
+              <h3 className="text-2xl font-bold">
+                Capture Dynamic Dataset &rarr;
+              </h3>
+              <p className="mt-4 text-xl">
+                For training Dynamic model click here!
+              </p>
+            </a>
+          </Link>
         </div>
       </main>
       <footer className="flex items-center justify-center w-full h-24 border-t">
