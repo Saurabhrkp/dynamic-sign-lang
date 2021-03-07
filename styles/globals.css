@@ -4,7 +4,7 @@
 
 @layer components {
   .btn {
-    @apply p-2 m-2 font-mono font-semibold tracking-wider text-white rounded-md shadow-lg;
+    @apply p-2 m-2 font-semibold tracking-wider text-white rounded-md shadow-lg;
   }
   .btn-blue {
     @apply bg-blue-500 hover:bg-blue-600;
