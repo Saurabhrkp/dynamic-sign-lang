@@ -1,11 +1,12 @@
 import React from "react";
 import Webcam from "react-webcam";
-import Meta from "../components/Meta";
 import JSZip from "jszip";
+import Contents from "../components/Contents";
+import Meta from "../components/Meta";
 
 import { options } from "../constants";
 
-const WebcamStreamCapture = () => {
+const CaptureVideoStream = () => {
   const webcamRef = React.useRef(null);
   const mediaRecorderRef = React.useRef(null);
   const [capturing, setCapturing] = React.useState(false);
@@ -14,6 +15,12 @@ const WebcamStreamCapture = () => {
   const [captureSet, setCaptureSet] = React.useState(10);
   const [index, setIndex] = React.useState(0);
   const [videos, setVideos] = React.useState([]);
+  // Default size 640 x 480
+  const videoConstraints = {
+    width: 512,
+    height: 384,
+    mirrored: true,
+  };
 
   const startCapture = React.useCallback(() => {
     setCapturing(true);
@@ -106,9 +113,11 @@ const WebcamStreamCapture = () => {
     <>
       <Meta title={"Capture Video for dataset"} />
       <Webcam
-        className="w-auto h-auto my-4 rounded-md shadow-lg lg:h-1/4"
+        width={512}
         audio={false}
         ref={webcamRef}
+        videoConstraints={videoConstraints}
+        className="w-auto h-auto my-4 rounded-md shadow-lg lg:h-1/4"
       />
       <div className="flex-container">
         <label className="label">
@@ -151,7 +160,7 @@ const WebcamStreamCapture = () => {
         {capturing ? (
           <>
             <button className="w-16 h-16 rounded-full btn btn-red animate-pulse" />
-            <h1 className="font-mono text-xl font-semibold text-center text-red-500">
+            <h1 className="text-xl font-semibold text-center text-red-500">
               Recording Set
             </h1>
           </>
@@ -161,7 +170,7 @@ const WebcamStreamCapture = () => {
               className="w-16 h-16 rounded-full btn btn-blue"
               onClick={startRecordingSet}
             />
-            <h1 className="font-mono text-xl font-semibold text-center text-blue-500">
+            <h1 className="text-xl font-semibold text-center text-blue-500">
               Start Capture
             </h1>
           </>
@@ -187,34 +196,14 @@ const WebcamStreamCapture = () => {
           </div>
         )}
       </div>
-      <div className="m-8 grid-container">
-        {videos.map((videoURL, i) => {
-          let filename = `${letter}_${i + parseInt(index)}`;
-          return (
-            <div key={filename} className="flex-col space-y-2 flex-container">
-              <video
-                src={videoURL}
-                autoPlay
-                loop
-                className="rounded-md shadow-lg"
-              />
-              <div className="flex-container">
-                <button
-                  className="btn btn-red"
-                  onClick={() => deleteVideo(videoURL)}
-                >
-                  Delete
-                </button>
-                <a href={videoURL} download={filename}>
-                  <button className="btn btn-green">Download</button>
-                </a>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <Contents
+        items={videos}
+        deleteItem={deleteVideo}
+        letter={letter}
+        index={index}
+      />
     </>
   );
 };
 
-export default WebcamStreamCapture;
+export default CaptureVideoStream;
