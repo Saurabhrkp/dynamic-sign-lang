@@ -19,7 +19,7 @@
     @apply flex flex-col items-center justify-center m-2 text-base font-semibold text-center md:flex-row md:text-xl;
   }
   .input {
-    @apply w-16 py-1 m-2 text-center border-4 border-blue-500 border-opacity-50 rounded-md shadow-lg focus:outline-none focus:ring-indigo-500 focus:border-blue-600;
+    @apply w-16 m-2 text-center border-4 border-blue-500 border-opacity-50 rounded-md shadow-lg focus:outline-none focus:ring-indigo-500 focus:border-blue-600;
   }
   .card {
     @apply p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600;
