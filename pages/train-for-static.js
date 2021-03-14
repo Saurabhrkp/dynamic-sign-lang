@@ -82,7 +82,7 @@ const TrainForStaticModel = () => {
                 <h2 className="p-3 text-lg font-semibold text-center md:text-3xl">
                   {images.label} - {images.data.length}
                 </h2>
-                <Results items={[...images.data]} label={images.label} />
+                <Results items={images.data} label={images.label} />
               </div>
             );
           })}
