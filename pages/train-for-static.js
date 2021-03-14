@@ -1,19 +1,15 @@
 import React from "react";
 import Meta from "../components/Meta";
 import JSZip from "jszip";
+import Results from "../components/Results-Grid";
 
 const TrainForStaticModel = () => {
   const [zipFiles, setZipFiles] = React.useState([]);
   const [files, setFiles] = React.useState([]);
   const [enabled, setEnabled] = React.useState(false);
-
-  React.useEffect(() => {
-    if (zipFiles.length <= 2) {
-      setEnabled(false);
-    } else {
-      setEnabled(true);
-    }
-  }, [zipFiles]);
+  const [show, setShow] = React.useState(false);
+  const [model, setModel] = React.useState(null);
+  let ml5;
 
   const onFileChange = React.useCallback(
     (event) => {
@@ -30,12 +26,12 @@ const TrainForStaticModel = () => {
     [zipFiles]
   );
 
-  const getTrainingData = React.useCallback(() => {
-    zipFiles.forEach(async (zipFile, idx) => {
+  const loadTrainingData = React.useCallback(() => {
+    zipFiles.forEach(async (zipFile) => {
       let zip = new JSZip();
       let zipFolder = await zip.loadAsync(zipFile);
       const image = { label: zipFile.name.split(".")[0], data: [] };
-      await zipFolder.forEach(async (_, file) => {
+      zipFolder.forEach(async (_, file) => {
         let dataType = "data:image/jpeg;base64,";
         let base64Data = await file.async("base64");
         image.data.push(`${dataType + base64Data}`);
@@ -44,24 +40,53 @@ const TrainForStaticModel = () => {
         return [...prevState, image];
       });
     });
+    setEnabled(true);
   }, [zipFiles, files]);
 
   return (
     <>
       <Meta title={"Train Static Model for dataset"} />
       <div className="flex-container">
-        <input type="file" accept=".zip" multiple onChange={onFileChange} />
+        <label className="label">
+          Upload Zip Files with Label:
+          <input
+            className="w-auto input"
+            type="file"
+            accept=".zip"
+            multiple
+            onChange={onFileChange}
+          />
+        </label>
+      </div>
+      <div className="flex-container">
         {zipFiles.length > 2 && (
-          <button onClick={() => getTrainingData()}>Load</button>
+          <button className="btn btn-green" onClick={() => loadTrainingData()}>
+            Load Training Data
+          </button>
+        )}
+        {enabled && (
+          <button
+            className="btn btn-blue"
+            type="submit"
+            onClick={() => setShow(true)}
+          >
+            Show Training Data
+          </button>
         )}
       </div>
-      {enabled ? (
-        <button type="submit">Submit</button>
-      ) : (
-        <button disabled type="submit">
-          Submit
-        </button>
-      )}
+      <div className="flex-container">
+        {show &&
+          files.map((images) => {
+            return (
+              <div key={`${images.label}`}>
+                <h2 className="p-3 text-lg font-semibold text-center md:text-3xl">
+                  {images.label} - {images.data.length}
+                </h2>
+                <Results items={[...images.data]} label={images.label} />
+              </div>
+            );
+          })}
+      </div>
     </>
   );
 };
