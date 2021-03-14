@@ -129,7 +129,7 @@ const CaptureVideoStream = () => {
         <label className="label">
           Record for:
           <select
-            className="input"
+            className="w-20 input"
             value={letter}
             onChange={(e) => setLetter(e.target.value)}
           >
