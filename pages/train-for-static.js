@@ -1,6 +1,7 @@
 import React from "react";
-import Meta from "../components/Meta";
 import JSZip from "jszip";
+import p5 from "p5";
+import Meta from "../components/Meta";
 import Results from "../components/Results-Grid";
 
 const TrainForStaticModel = () => {
@@ -9,7 +10,19 @@ const TrainForStaticModel = () => {
   const [enabled, setEnabled] = React.useState(false);
   const [show, setShow] = React.useState(false);
   const [model, setModel] = React.useState(null);
+  const IMAGE_WIDTH = 512;
+  const IMAGE_HEIGHT = 384;
+  const IMAGE_CHANNELS = 4;
   let ml5;
+
+  React.useEffect(() => {
+    const options = {
+      task: "imageClassification",
+      inputs: [IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_CHANNELS],
+    };
+    ml5 = require("ml5");
+    setModel(ml5.neuralNetwork(options));
+  }, []);
 
   const onFileChange = React.useCallback(
     (event) => {
@@ -25,6 +38,36 @@ const TrainForStaticModel = () => {
     },
     [zipFiles]
   );
+  const startTrainingModel = React.useCallback(() => {
+    files.forEach((file) => {
+      file.data.map((src) => {
+        const img = new Image();
+        img.src = src;
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        img.onload = function () {
+          // ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+          ctx.drawImage(img, 0, 0, 512, 384, 0, 0, canvas.width, canvas.height);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imageData.data;
+          let inputImage = {
+            image: [],
+          };
+          for (let i = 0; i < data.length; i += 4) {
+            let r = data[i + 0] / 255;
+            let g = data[i + 1] / 255;
+            let b = data[i + 2] / 255;
+            let a = data[i + 3] / 255;
+            console.log(r, g, b, a);
+            inputImage.image.push(r, g, b, a);
+          }
+          let target = { label: file.label };
+
+          model.addData(inputImage, target);
+        };
+      });
+    });
+  }, [files]);
 
   const loadTrainingData = React.useCallback(() => {
     zipFiles.forEach(async (zipFile) => {
@@ -61,19 +104,34 @@ const TrainForStaticModel = () => {
       <div className="flex-container">
         {zipFiles.length > 2 && (
           <button className="btn btn-green" onClick={() => loadTrainingData()}>
-            Load Training Data
+            {!enabled ? "Load Training Data" : "Training Data Loaded"}
           </button>
         )}
         {enabled && (
           <button
             className="btn btn-blue"
             type="submit"
-            onClick={() => setShow(true)}
+            onClick={() => setShow(!show)}
           >
-            Show Training Data
+            {!show ? "Show Training Data" : "Hide Training Data"}
           </button>
         )}
       </div>
+      <div className="flex-container">
+        {enabled && (
+          <button
+            className="btn btn-red"
+            type="submit"
+            onClick={startTrainingModel}
+          >
+            Start Training Model
+          </button>
+        )}
+      </div>
+      <canvas
+        id="canvas"
+        style={{ width: `${IMAGE_WIDTH}px`, height: `${IMAGE_HEIGHT}px` }}
+      ></canvas>
       <div className="flex-container">
         {show &&
           files.map((images) => {
