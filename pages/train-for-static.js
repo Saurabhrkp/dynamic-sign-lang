@@ -1,6 +1,5 @@
 import React from "react";
 import JSZip from "jszip";
-import p5 from "p5";
 import Meta from "../components/Meta";
 import Results from "../components/Results-Grid";
 
